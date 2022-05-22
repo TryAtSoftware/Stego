@@ -5,4 +5,3 @@ export interface IEncodeRequest {
     message: string;
     secret?: ISecret;
 }
-

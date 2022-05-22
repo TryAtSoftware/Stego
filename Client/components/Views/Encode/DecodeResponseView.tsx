@@ -9,8 +9,8 @@ interface IDecodeResponseViewProps {
 const DecodeResponseViewComponent = ({ response }: IDecodeResponseViewProps): JSX.Element | null => {
     if (!response) return null;
 
-    return <Box>
-        <Typography sx={{}}>{response.message}</Typography>
+    return <Box sx={{ wordBreak: "break-all" }}>
+        <Typography>{response.message}</Typography>
     </Box>;
 };
 

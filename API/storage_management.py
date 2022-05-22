@@ -3,7 +3,7 @@ import uuid
 from typing import IO
 
 from config import StorageSettings
-from constants import FORMAT
+from stego_utils import FORMAT
 
 storage_settings = StorageSettings()
 

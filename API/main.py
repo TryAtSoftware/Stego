@@ -1,7 +1,9 @@
 import config
+import encryption
 import models
+import stego_utils
+
 from PIL import Image
-from constants import MEDIA_TYPE
 from fastapi import FastAPI, HTTPException, File
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
@@ -26,7 +28,7 @@ def upload(file: bytes = File()):
 @app.get("/file/{file_id}")
 def get_file(file_id: str):
     path = build_path(file_id)
-    return FileResponse(path=path, media_type=MEDIA_TYPE)
+    return FileResponse(path=path, media_type=stego_utils.MEDIA_TYPE)
 
 
 @app.post("/encode")
@@ -39,7 +41,10 @@ def encode(input_model: models.EncodeMessageInputModel):
 def decode(input_model: models.DecodeMessageInputModel):
     with load_image(input_model.image_id) as image:
         message = decode_message(image, input_model.bits_per_pixel)
-        return {"message": message}
+
+    if input_model.secret:
+        message = encryption.decrypt(message, input_model.secret.key)
+    return {"message": message}
 
 
 def load_image(file_id: str) -> Image:
@@ -53,7 +58,11 @@ def encode_internally(image: Image, input_model: models.EncodeMessageInputModel)
     total_bytes = image.width * image.height * image_bands
     available_positions = total_bytes * input_model.bits_per_pixel
 
-    message_bits = to_bits(format_message(input_model.message))
+    message = input_model.message
+    if input_model.secret:
+        message = encryption.encrypt(message, input_model.secret.key)
+
+    message_bits = to_bits(format_message(message))
     if available_positions < len(message_bits):
         raise HTTPException(status_code=400, detail="The message is too long.")
 
@@ -118,7 +127,7 @@ def decode_message(image: Image, bits_per_pixel: int) -> str:
                     bit_value = get_bit(pixel, power_position)
                     character_bits.append(bit_value)
 
-                    if len(character_bits) == 8:
+                    if len(character_bits) == stego_utils.BYTES_COUNT:
                         letter = from_bits(character_bits)
 
                         if letter == algorithm_settings.prefix and not reached_prefix:
@@ -169,11 +178,11 @@ def from_bits(bits: list) -> str:
 
 
 def to_bits(text: str) -> list:
-    text_bytes = text.encode("utf-8")
+    text_bytes = stego_utils.encode_str(text)
 
     bits = []
     for byte in text_bytes:
-        current_bits = get_last_bits(byte, 8)
+        current_bits = get_last_bits(byte, stego_utils.BYTES_COUNT)
         for bit in current_bits:
             bits.append(bit)
 
