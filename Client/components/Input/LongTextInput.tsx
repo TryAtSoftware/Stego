@@ -7,6 +7,6 @@ type LongTextControlProps = IValueChangeProps<string> & ITextInputProps;
 const LongTextControlComponent = ({ currentValue, label, onChange, placeholder }: LongTextControlProps): JSX.Element => {
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value), [onChange]);
 
-    return <TextField label={label} placeholder={placeholder} onChange={handleChange} value={currentValue} multiline />;
+    return <TextField label={label} placeholder={placeholder} onChange={handleChange} value={currentValue} multiline fullWidth />;
 };
 export const LongTextInput = React.memo(LongTextControlComponent);

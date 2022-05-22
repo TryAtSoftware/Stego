@@ -12,6 +12,6 @@ const NumericInputComponent = ({ currentValue, label, onChange, min, max }: Nume
         onChange(value);
     }, [onChange]);
 
-    return <TextField label={label} type="number" InputProps={{ inputProps: { max, min } }} onChange={handleChange} value={currentValue} />;
+    return <TextField label={label} type="number" InputProps={{ inputProps: { max, min } }} onChange={handleChange} value={currentValue} fullWidth />;
 };
 export const NumericInput = React.memo(NumericInputComponent);

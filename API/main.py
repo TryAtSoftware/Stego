@@ -64,7 +64,10 @@ def encode_internally(image: Image, input_model: models.EncodeMessageInputModel)
 
     message_bits = to_bits(format_message(message))
     if available_positions < len(message_bits):
-        raise HTTPException(status_code=400, detail="The message is too long.")
+        error_message = f"The message is too long. There are {available_positions} available positions but {len(message_bits)} are required."
+        raise HTTPException(status_code=400, detail=error_message)
+
+    print(f'Available positions: {available_positions}', f'Message bits: {len(message_bits)}')
 
     changes = encode_message(image, message_bits, input_model.bits_per_pixel)
     if changes < 0:
