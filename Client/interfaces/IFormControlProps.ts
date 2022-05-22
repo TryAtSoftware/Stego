@@ -7,3 +7,8 @@ export interface IFormControlProps {
 export interface ITextInputProps extends IFormControlProps {
     placeholder?: string;
 }
+
+export interface INumericInputProps extends IFormControlProps {
+    min?: number;
+    max?: number;
+}

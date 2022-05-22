@@ -9,10 +9,12 @@ import { SecretForm } from "@stego/components/Forms";
 import { ISecret } from "@stego/models/ISecret";
 import { IFileData } from "@stego/models/common/IFileData";
 import { IDecodeRequest } from "@stego/models/IDecodeRequest";
+import { NumericInput } from "@stego/components/Input/NumericInput";
 
 type DecodeFormProps = IChangeProps<IFormState<IDecodeRequest>>;
 const DecodeFormComponent = ({ onChange }: DecodeFormProps): JSX.Element => {
     const [image, setImage] = useState<IFileData | null>(null);
+    const [bitsPerPixel, setBitsPerPixel] = useState(1);
     const [withSecret, setWithSecret] = useState(false);
     const [secretFormState, setSecretFormState] = useState<IFormState<ISecret>>();
 
@@ -25,10 +27,10 @@ const DecodeFormComponent = ({ onChange }: DecodeFormProps): JSX.Element => {
         const secretIsValid = !withSecret || !!secretFormState?.isValid;
         const currentState: IFormState<IDecodeRequest> = {
             isValid: !!image && secretIsValid,
-            model: { image_id: image?.id ?? "", secret: secretFormState?.model }
+            model: { image_id: image?.id ?? "", bits_per_pixel: bitsPerPixel, secret: secretFormState?.model }
         };
         onChange?.(currentState);
-    }, [image, withSecret, secretFormState]);
+    }, [image, bitsPerPixel, withSecret, secretFormState]);
 
     return <FormContainer>
         <FileUploadControl currentValue={image} onChange={setImage}>
@@ -36,6 +38,9 @@ const DecodeFormComponent = ({ onChange }: DecodeFormProps): JSX.Element => {
                 Upload
             </Button>
         </FileUploadControl>
+        <Box>
+            <NumericInput label="Bits per pixel" currentValue={bitsPerPixel} onChange={setBitsPerPixel} min={1} max={8} />
+        </Box>
         <Box>
             <BooleanInput currentValue={withSecret} onChange={handleWithSecretChange} label="With encryption" />
             {withSecret && <Box sx={{ padding: 1 }}><SecretForm onChange={setSecretFormState} /></Box>}

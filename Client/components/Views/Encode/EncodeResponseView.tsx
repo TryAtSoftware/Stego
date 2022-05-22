@@ -1,6 +1,6 @@
 import React from "react";
 import { IEncodeResponse } from "@stego/models/IEncodeResponse";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { buildFileUrl } from "@stego/services/utilities";
 
 interface IEncodeResponseViewProps {
@@ -11,6 +11,9 @@ const EncodeResponseViewComponent = ({ response }: IEncodeResponseViewProps): JS
     if (!response) return null;
 
     return <Box>
+        <Typography>
+            The encoding process finished with {response.changes} changes being made.
+        </Typography>
         <a download href={buildFileUrl(response.id)}>
             Download the encoded image from here
         </a>
