@@ -9,19 +9,22 @@ import { useService } from "@stego/hooks/useService";
 import { encodeAsync } from "../services/stego-service";
 import { IEncodeResponse } from "@stego/models/IEncodeResponse";
 import { EncodeResponseView } from "@stego/components/Views";
+import { useErrors } from "@stego/hooks/useErrors";
 
 const EncodePage: NextPage = () => {
+    const errors = useErrors();
     const service = useService();
     const [formState, setFormState] = useState<IFormState<IEncodeRequest>>(defaultFormState<IEncodeRequest>());
     const [isEncoding, setIsEncoding] = useState<boolean>( false)
     const [encodeResponse, setEncodeResponse] = useState<IEncodeResponse | null>(null);
 
     const submitForm = useCallback(async (): Promise<void> => {
-        if (!isEncoding) setIsEncoding(true);
+        setIsEncoding(true);
+        errors.clearErrors();
         const callResult = await service.call((ac) => encodeAsync(formState.model, ac));
         if (!callResult.isActive) return;
 
-        if (!callResult.result.isSuccessful()) console.log(callResult.result.getErrorMessages());
+        if (!callResult.result.isSuccessful()) errors.setErrors(callResult.result.getErrorMessages());
         else setEncodeResponse(callResult.result.getData() ?? null);
         setIsEncoding(false);
     }, [formState.model, service]);

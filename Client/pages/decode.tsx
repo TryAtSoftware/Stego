@@ -9,19 +9,22 @@ import { IDecodeRequest } from "@stego/models/IDecodeRequest";
 import { Box, CircularProgress } from "@mui/material";
 import { IDecodeResponse } from "@stego/models/IDecodeResponse";
 import { DecodeResponseView } from "@stego/components/Views/Encode/DecodeResponseView";
+import { useErrors } from "@stego/hooks/useErrors";
 
 const DecodePage: NextPage = () => {
+    const errors = useErrors();
     const service = useService();
     const [formState, setFormState] = useState<IFormState<IDecodeRequest>>(defaultFormState<IDecodeRequest>());
     const [isDecoding, setIsDecoding] = useState<boolean>( false)
     const [encodeResponse, setEncodeResponse] = useState<IDecodeResponse | null>(null);
 
     const submitForm = useCallback(async (): Promise<void> => {
-        if (!isDecoding) setIsDecoding(true);
+        setIsDecoding(true);
+        errors.clearErrors();
         const callResult = await service.call((ac) => decodeAsync(formState.model, ac));
         if (!callResult.isActive) return;
 
-        if (!callResult.result.isSuccessful()) console.log(callResult.result.getErrorMessages());
+        if (!callResult.result.isSuccessful()) errors.setErrors(callResult.result.getErrorMessages());
         else setEncodeResponse(callResult.result.getData() ?? null);
         setIsDecoding(false);
     }, [formState.model, service]);
@@ -35,6 +38,7 @@ const DecodePage: NextPage = () => {
             <SubmitButton text="Decode" onClick={submitForm} disabled={!formState.isValid} />
             {isDecoding && <CircularProgress />}
             {!isDecoding && encodeResponse && <DecodeResponseView response={encodeResponse} />}
+            {errors.render()}
         </>
     );
 };

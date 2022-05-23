@@ -1,3 +1,5 @@
+from cryptography.fernet import InvalidToken
+
 import config
 import encryption
 import models
@@ -43,7 +45,11 @@ def decode(input_model: models.DecodeMessageInputModel):
         message = decode_message(image, input_model.bits_per_pixel)
 
     if input_model.secret:
-        message = encryption.decrypt(message, input_model.secret.key)
+        try:
+            message = encryption.decrypt(message, input_model.secret.key)
+        except InvalidToken:
+            raise HTTPException(status_code=400, detail="Invalid encryption token")
+
     return {"message": message}
 
 
@@ -55,6 +61,7 @@ def load_image(file_id: str) -> Image:
 
 def encode_internally(image: Image, input_model: models.EncodeMessageInputModel):
     image_bands = len(image.getbands())
+    print(f'Message bands count: {image_bands}')
     total_bytes = image.width * image.height * image_bands
     available_positions = total_bytes * input_model.bits_per_pixel
 

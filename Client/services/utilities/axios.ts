@@ -48,7 +48,7 @@ function setErrors<TResult>(operationResult: OperationResult<TResult>, error: an
 
     console.log(error)
 
-    if (error.response && error.response.data) operationResult.addError(error.response.data);
+    if (error.response && error.response.data) operationResult.addError(error.response.data.detail);
     else if (error.request) operationResult.addError("No response was received.");
     else operationResult.addError("An error occurred.");
 }
