@@ -20,6 +20,7 @@ const EncodePage: NextPage = () => {
 
     const submitForm = useCallback(async (): Promise<void> => {
         setIsEncoding(true);
+        setEncodeResponse(null)
         errors.clearErrors();
         const callResult = await service.call((ac) => encodeAsync(formState.model, ac));
         if (!callResult.isActive) return;

@@ -16,16 +16,17 @@ const DecodePage: NextPage = () => {
     const service = useService();
     const [formState, setFormState] = useState<IFormState<IDecodeRequest>>(defaultFormState<IDecodeRequest>());
     const [isDecoding, setIsDecoding] = useState<boolean>( false)
-    const [encodeResponse, setEncodeResponse] = useState<IDecodeResponse | null>(null);
+    const [decodeResponse, setDecodeResponse] = useState<IDecodeResponse | null>(null);
 
     const submitForm = useCallback(async (): Promise<void> => {
         setIsDecoding(true);
+        setDecodeResponse(null)
         errors.clearErrors();
         const callResult = await service.call((ac) => decodeAsync(formState.model, ac));
         if (!callResult.isActive) return;
 
         if (!callResult.result.isSuccessful()) errors.setErrors(callResult.result.getErrorMessages());
-        else setEncodeResponse(callResult.result.getData() ?? null);
+        else setDecodeResponse(callResult.result.getData() ?? null);
         setIsDecoding(false);
     }, [formState.model, service]);
 
@@ -37,7 +38,7 @@ const DecodePage: NextPage = () => {
             </Box>
             <SubmitButton text="Decode" onClick={submitForm} disabled={!formState.isValid} />
             {isDecoding && <CircularProgress />}
-            {!isDecoding && encodeResponse && <DecodeResponseView response={encodeResponse} />}
+            {!isDecoding && decodeResponse && <DecodeResponseView response={decodeResponse} />}
             {errors.render()}
         </>
     );
