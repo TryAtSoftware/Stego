@@ -6,20 +6,21 @@ import { DecodeForm } from "@stego/components/Forms";
 import { SubmitButton } from "@stego/components/Buttons";
 import { useCallback, useState } from "react";
 import { IDecodeRequest } from "@stego/models/IDecodeRequest";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { IDecodeResponse } from "@stego/models/IDecodeResponse";
 import { DecodeResponseView } from "@stego/components/Views/Encode/DecodeResponseView";
 import { useErrors } from "@stego/hooks/useErrors";
+import { useLoadingManager } from "@stego/hooks/useLoadingManager";
 
 const DecodePage: NextPage = () => {
+    const loadingManager = useLoadingManager();
     const errors = useErrors();
     const service = useService();
     const [formState, setFormState] = useState<IFormState<IDecodeRequest>>(defaultFormState<IDecodeRequest>());
-    const [isDecoding, setIsDecoding] = useState<boolean>( false)
     const [decodeResponse, setDecodeResponse] = useState<IDecodeResponse | null>(null);
 
     const submitForm = useCallback(async (): Promise<void> => {
-        setIsDecoding(true);
+        loadingManager.startLoading();
         setDecodeResponse(null)
         errors.clearErrors();
         const callResult = await service.call((ac) => decodeAsync(formState.model, ac));
@@ -27,8 +28,8 @@ const DecodePage: NextPage = () => {
 
         if (!callResult.result.isSuccessful()) errors.setErrors(callResult.result.getErrorMessages());
         else setDecodeResponse(callResult.result.getData() ?? null);
-        setIsDecoding(false);
-    }, [formState.model, service]);
+        loadingManager.stopLoading();
+    }, [formState.model, service, loadingManager]);
 
     return (
         <>
@@ -38,8 +39,8 @@ const DecodePage: NextPage = () => {
             </Box>
             <SubmitButton text="Decode" onClick={submitForm} disabled={!formState.isValid} />
             <Box>
-            {isDecoding && <CircularProgress />}
-            {!isDecoding && decodeResponse && <DecodeResponseView response={decodeResponse} />}
+            {loadingManager.render()}
+            {!loadingManager.isLoading && decodeResponse && <DecodeResponseView response={decodeResponse} />}
             {errors.render()}
             </Box>
         </>
