@@ -1,7 +1,6 @@
-import { ISecret } from "@stego/models/ISecret";
+import { IAlgorithmConfig } from "@stego/models/IAlgorithmConfig";
 
 export interface IDecodeRequest {
     image_id: string;
-    bits_per_pixel: number;
-    secret?: ISecret
+    config?: IAlgorithmConfig;
 }

@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Box, CircularProgress, styled } from "@mui/material";
-import { IParentComponentProps } from "@stego/interfaces/IParentComponentProps";
+import { Box, Button, CircularProgress, styled } from "@mui/material";
 import { IValueChangeProps } from "@stego/interfaces/IValueChangeProps";
 import { IFileData } from "@stego/models/common/IFileData";
 import { DynamicImage } from "@stego/components/Images/DynamicImage";
@@ -10,8 +9,8 @@ import { useErrors } from "@stego/hooks/useErrors";
 
 const FileUploadInput = styled("input")({ display: "none" });
 
-type FileUploadControlProps = IParentComponentProps & IValueChangeProps<IFileData | null>;
-const FileUploadControlComponent = ({ children, currentValue, onChange }: FileUploadControlProps): JSX.Element => {
+type FileUploadControlProps = IValueChangeProps<IFileData | null>;
+const FileUploadControlComponent = ({ currentValue, onChange }: FileUploadControlProps): JSX.Element => {
     const [isLoading, setIsLoading] = useState(false);
     const errors = useErrors();
     const service = useService();
@@ -39,7 +38,7 @@ const FileUploadControlComponent = ({ children, currentValue, onChange }: FileUp
         <Box sx={{ display: "flex", alignItems: "center", columnGap: 5 }}>
             <Box component="label">
                 <FileUploadInput accept="image/*" type="file" onChange={handleUpload} />
-                {children}
+                <Button variant="contained" component="span"> Upload </Button>
             </Box>
             <Box>
                 <Box>

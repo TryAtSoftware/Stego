@@ -37,9 +37,11 @@ const DecodePage: NextPage = () => {
                 <DecodeForm onChange={setFormState} />
             </Box>
             <SubmitButton text="Decode" onClick={submitForm} disabled={!formState.isValid} />
+            <Box>
             {isDecoding && <CircularProgress />}
             {!isDecoding && decodeResponse && <DecodeResponseView response={decodeResponse} />}
             {errors.render()}
+            </Box>
         </>
     );
 };

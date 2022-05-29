@@ -15,12 +15,12 @@ const EncodePage: NextPage = () => {
     const errors = useErrors();
     const service = useService();
     const [formState, setFormState] = useState<IFormState<IEncodeRequest>>(defaultFormState<IEncodeRequest>());
-    const [isEncoding, setIsEncoding] = useState<boolean>( false)
+    const [isEncoding, setIsEncoding] = useState<boolean>(false);
     const [encodeResponse, setEncodeResponse] = useState<IEncodeResponse | null>(null);
 
     const submitForm = useCallback(async (): Promise<void> => {
         setIsEncoding(true);
-        setEncodeResponse(null)
+        setEncodeResponse(null);
         errors.clearErrors();
         const callResult = await service.call((ac) => encodeAsync(formState.model, ac));
         if (!callResult.isActive) return;
@@ -37,8 +37,11 @@ const EncodePage: NextPage = () => {
                 <EncodeForm onChange={setFormState} />
             </Box>
             <SubmitButton text="Encode" onClick={submitForm} disabled={!formState.isValid} />
-            {isEncoding && <CircularProgress />}
-            {!isEncoding && encodeResponse && <EncodeResponseView response={encodeResponse} />}
+            <Box>
+                {isEncoding && <CircularProgress />}
+                {!isEncoding && encodeResponse && <EncodeResponseView response={encodeResponse} />}
+                {errors.render()}
+            </Box>
         </>
     );
 };

@@ -42,11 +42,11 @@ def encode(input_model: models.EncodeMessageInputModel):
 @app.post("/decode")
 def decode(input_model: models.DecodeMessageInputModel):
     with load_image(input_model.image_id) as image:
-        message = decode_message(image, input_model.bits_per_pixel)
+        message = decode_message(image, input_model.config.bits_per_pixel)
 
-    if input_model.secret:
+    if input_model.config.secret:
         try:
-            message = encryption.decrypt(message, input_model.secret.key)
+            message = encryption.decrypt(message, input_model.config.secret.key)
         except InvalidToken:
             raise HTTPException(status_code=400, detail="Invalid encryption token")
 
@@ -63,11 +63,11 @@ def encode_internally(image: Image, input_model: models.EncodeMessageInputModel)
     image_bands = len(image.getbands())
     print(f'Message bands count: {image_bands}')
     total_bytes = image.width * image.height * image_bands
-    available_positions = total_bytes * input_model.bits_per_pixel
+    available_positions = total_bytes * input_model.config.bits_per_pixel
 
     message = input_model.message
-    if input_model.secret:
-        message = encryption.encrypt(message, input_model.secret.key)
+    if input_model.config.secret:
+        message = encryption.encrypt(message, input_model.config.secret.key)
 
     message_bits = to_bits(format_message(message))
     if available_positions < len(message_bits):
@@ -76,7 +76,7 @@ def encode_internally(image: Image, input_model: models.EncodeMessageInputModel)
 
     print(f'Available positions: {available_positions}', f'Message bits: {len(message_bits)}')
 
-    changes = encode_message(image, message_bits, input_model.bits_per_pixel)
+    changes = encode_message(image, message_bits, input_model.config.bits_per_pixel)
     if changes < 0:
         raise HTTPException(status_code=400, detail="Encoding was unsuccessful")
 
