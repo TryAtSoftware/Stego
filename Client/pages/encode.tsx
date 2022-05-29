@@ -4,13 +4,14 @@ import { EncodeForm } from "@stego/components/Forms";
 import { IEncodeRequest } from "@stego/models/IEncodeRequest";
 import { defaultFormState, IFormState } from "@stego/models/common/IFormState";
 import { SubmitButton } from "@stego/components/Buttons";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useService } from "@stego/hooks/useService";
 import { encodeAsync } from "../services/stego-service";
 import { IEncodeResponse } from "@stego/models/IEncodeResponse";
 import { EncodeResponseView } from "@stego/components/Views";
 import { useErrors } from "@stego/hooks/useErrors";
 import { useLoadingManager } from "@stego/hooks/useLoadingManager";
+import { PrimaryText } from "@stego/components/Text";
 
 const EncodePage: NextPage = () => {
     const loadingManager = useLoadingManager();
@@ -33,7 +34,7 @@ const EncodePage: NextPage = () => {
 
     return (
         <>
-            <h1>Encode!</h1>
+            <Typography variant="h3">Encode!</Typography>
             <Box sx={{ py: 2 }}>
                 <EncodeForm onChange={setFormState} />
             </Box>

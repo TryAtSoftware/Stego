@@ -1,0 +1,25 @@
+@keyframes animate-appearance {
+	0% {
+		opacity: 0;
+		transform: scale(0.5, 0.5);
+	}
+
+	100% {
+		opacity: 1;
+		transform: scale(1, 1);
+	}
+}
+
+.Animated {
+	animation-name: animate-appearance;
+	animation-duration: 0.5s;
+	animation-timing-function: cubic-bezier(.26, .53, .74, 1.48);
+	animation-fill-mode: backwards;
+}
+
+.SecondStep {
+	animation-delay: 0.5s;
+}
+.ThirdStep {
+	animation-delay: 1s;
+}

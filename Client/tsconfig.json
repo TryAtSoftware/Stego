@@ -22,6 +22,9 @@
       "@stego/styles/*": [
         "./styles/*"
       ],
+      "@stego/assets/*": [
+        "./public/*"
+      ],
       "@stego/components/*": [
         "./components/*"
       ],

@@ -6,7 +6,7 @@ import { DecodeForm } from "@stego/components/Forms";
 import { SubmitButton } from "@stego/components/Buttons";
 import { useCallback, useState } from "react";
 import { IDecodeRequest } from "@stego/models/IDecodeRequest";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { IDecodeResponse } from "@stego/models/IDecodeResponse";
 import { DecodeResponseView } from "@stego/components/Views/Encode/DecodeResponseView";
 import { useErrors } from "@stego/hooks/useErrors";
@@ -21,7 +21,7 @@ const DecodePage: NextPage = () => {
 
     const submitForm = useCallback(async (): Promise<void> => {
         loadingManager.startLoading();
-        setDecodeResponse(null)
+        setDecodeResponse(null);
         errors.clearErrors();
         const callResult = await service.call((ac) => decodeAsync(formState.model, ac));
         if (!callResult.isActive) return;
@@ -33,15 +33,15 @@ const DecodePage: NextPage = () => {
 
     return (
         <>
-            <h1>Decode!</h1>
+            <Typography variant="h3">Decode!</Typography>
             <Box sx={{ py: 2 }}>
                 <DecodeForm onChange={setFormState} />
             </Box>
             <SubmitButton text="Decode" onClick={submitForm} disabled={!formState.isValid} />
             <Box>
-            {loadingManager.render()}
-            {!loadingManager.isLoading && decodeResponse && <DecodeResponseView response={decodeResponse} />}
-            {errors.render()}
+                {loadingManager.render()}
+                {!loadingManager.isLoading && decodeResponse && <DecodeResponseView response={decodeResponse} />}
+                {errors.render()}
             </Box>
         </>
     );

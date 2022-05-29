@@ -9,6 +9,7 @@ const HeaderComponent = (): JSX.Element => {
 
     return <AppBar position="sticky">
         <Toolbar sx={toolbarStyles}>
+            <Link href="/"><HeaderText text="Home" /></Link>
             {toolbarItems.map((i: string, index: number) => <Link href={`/${i.toLowerCase()}`} key={index}><HeaderText text={i} /></Link>)}
         </Toolbar>
     </AppBar>;
